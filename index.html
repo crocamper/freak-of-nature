@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Freak of Nature!</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.1.1/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+  <script type="text/javascript">
+  var config = {
+      type: Phaser.AUTO,
+      width: 800,
+      height: 600,
+      physics: {
+       default: 'arcade',
+       arcade: {
+           gravity: { y: 300 },
+           debug: false
+       }
+   },
+      scene: {
+        preload: preload,
+        create: create,
+        update: update
+      }
+
+  };
+
+
+  var game = new Phaser.Game(config);
+
+  let bg1;
+
+  let space3;
+
+  let player;
+
+  let laser;
+
+  let enemy1;
+
+  let introText;
+
+  let block1;
+  let block2;
+  let block3;
+  let block4;
+
+  var gameStarted = false;
+
+    function preload ()
+  {
+    this.load.image('bullet', 'assets/laser.png');
+    this.load.image('bg1', 'assets/bg1.png');
+      this.load.image('space3', 'assets/space3.png');
+      this.load.image('ground', 'assets/platform.png');
+      this.load.image('button-text', 'assets/button-text.png');
+      this.load.spritesheet('freak',
+        'assets/player.png',
+        { frameWidth: 60, frameHeight: 86 }
+    );
+    this.load.spritesheet('enemy1',
+        'assets/pengfoe.png',
+        { frameWidth: 61, frameHeight: 86 }
+  );
+  this.load.spritesheet('enemy2',
+      'assets/deerfoe.png',
+      { frameWidth: 93.2, frameHeight: 86 }
+);
+//this.load.audio('theme', [
+//        'assets/theme.ogg',
+//        'assets/theme.mp3'
+//    ]);
+  }
+
+  function create ()
+  {
+
+  //  var music = this.sound.add('theme');
+
+//    music.play();
+
+   cursors = this.input.keyboard.createCursorKeys();
+
+    bg1 = this.add.image(400, 300, 'bg1');
+    space3 = this.add.image(400, 300, 'space3');
+    space3.visible = false;
+    platforms = this.physics.add.staticGroup();
+
+    block1 =  platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+    block2 =  platforms.create(600, 400, 'ground');
+    block3 =  platforms.create(50, 250, 'ground');
+    block4 =  platforms.create(750, 220, 'ground');
+    block1.visible = false;
+    block2.visible = false;
+    block3.visible = false;
+    block4.visible = false;
+    player = this.physics.add.sprite(100, 450, 'freak');
+
+    player.setBounce(0.2);
+    player.setCollideWorldBounds(true);
+
+    this.anims.create({
+    key: 'left',
+    frames: this.anims.generateFrameNumbers('freak', { start: 0, end: 1 }),
+    frameRate: 5,
+    repeat: -1
+});
+
+this.anims.create({
+    key: 'up',
+    frames: this.anims.generateFrameNumbers('freak', { start: 2, end: 3 }) ,
+    frameRate: 5,
+    repeat: -1
+});
+
+this.anims.create({
+    key: 'right',
+    frames: this.anims.generateFrameNumbers('freak', { start: 4, end: 5 }),
+    frameRate: 5,
+    repeat: -1
+});
+
+enemy1 = this.physics.add.sprite(200, 400, 'enemy1');
+enemy1.setBounce(0.2);
+enemy1.setCollideWorldBounds(true);
+
+this.anims.create({
+key: 'walkLeft',
+frames: this.anims.generateFrameNumbers('enemy1', { start: 0, end: 1 }),
+frameRate: 5,
+repeat: -1
+});
+
+this.anims.create({
+key: 'walkRight',
+frames: this.anims.generateFrameNumbers('enemy1', { start: 2, end: 3 }),
+frameRate: 5,
+repeat: -1
+});
+
+enemy2 = this.physics.add.sprite(200, 100, 'enemy2');
+enemy2.setBounce(0.2);
+enemy2.setCollideWorldBounds(true);
+
+
+this.anims.create({
+key: 'deerLeft',
+frames: this.anims.generateFrameNumbers('enemy2', { start: 0, end: 1 }),
+frameRate: 5,
+repeat: -1
+});
+
+this.anims.create({
+key: 'deerRight',
+frames: this.anims.generateFrameNumbers('enemy2', { start: 2, end: 3 }),
+frameRate: 5,
+repeat: -1
+});
+
+this.physics.add.collider(enemy1, platforms);
+
+this.physics.add.collider(enemy2, platforms);
+
+this.physics.add.collider(player, platforms);
+
+this.physics.add.collider(player, enemy1);
+
+this.physics.add.collider(player, enemy2);
+
+player.visible = false;
+enemy1.visible = false;
+enemy2.visible = false;
+
+
+introText = this.add.text(
+      32,
+      24,
+      "Click to start playing, use the keyboard to move."
+    );
+
+    this.input.on("pointerdown", function() {
+      if (!gameStarted) {
+        startGame();
+      }
+});
+}
+
+function update ()
+  {
+
+    enemy1.setVelocityX(160);
+    enemy1.anims.play('walkRight', true);
+    
+    enemy2.setVelocityX(160);
+    enemy2.anims.play('deerRight', true);
+
+    if (cursors.left.isDown)
+{
+    player.setVelocityX(-160);
+    player.anims.play('left', true);
+
+}
+else if (cursors.right.isDown)
+{
+    player.setVelocityX(160);
+    player.anims.play('right', true);
+
+}
+else if (cursors.up.isDown)
+{
+    player.setVelocityY(-330);
+    player.anims.play('up', true);
+} else if (cursors.down.isDown)
+{
+  player.setVelocityY(330);
+  player.anims.play('up', true);
+} else {
+  player.setVelocityY(0);
+  player.anims.play('up', true);
+}
+}
+function startGame() {
+  introText.visible = false;
+  block1.visible = true;
+  block2.visible = true;
+  block3.visible = true;
+  block4.visible = true;
+  player.visible = true;
+  enemy1.visible = true;
+  enemy2.visible = true;
+  gameStarted = true;
+  bg1.visible = false;
+  space3.visible = true;
+}
+
+  </script>
+</body>
+
+</html>
