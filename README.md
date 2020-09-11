@@ -3,7 +3,7 @@ Phaser 3 game demo for Game off 2018.
 
 Programming-ugurozcelik
 
-Design-cetinozcelik
+Designer-cetinozcelik
 
 Text editor-Atom
 
